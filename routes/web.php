@@ -13,8 +13,10 @@ use App\Http\Controllers\LeaveRequestController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 
@@ -161,6 +163,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::put('payments/{id}', [PaymentController::class, 'update']);
    Route::delete('payments/{id}', [PaymentController::class, 'destroy']);
    Route::get('payments/{id}/show', [PaymentController::class, 'show']);
+   Route::get('permissions',[PermissionController::class, 'index' ])->name('permissions');
+   Route::post('permissions/create', [PermissionController::class, 'create']);
+   Route::post('permissions/store', [PermissionController::class, 'store']);
+   Route::get('permissions/{id}/edit', [PermissionController::class, 'edit']);
+   Route::put('permissions/{id}', [PermissionController::class, 'update']);
+   Route::delete('permissions/{id}', [PermissionController::class, 'destroy']);
+   Route::get('permissions/{id}/show', [PermissionController::class, 'show']);
+   Route::get('roles',[RoleController::class, 'index' ]);
+   Route::post('roles/create', [RoleController::class, 'create']);
+   Route::post('roles/store', [RoleController::class, 'store']);
+   Route::get('roles/{id}/edit', [RoleController::class, 'edit']);
+   Route::put('roles/{id}', [RoleController::class, 'update']);
    
 });
 
