@@ -59,5 +59,34 @@ class PermissionController extends Controller
         $role->revokePermissionTo($permission);
         return redirect()->back();
     }
+    
+    public function edit($id)
+    {
+        abort_if(!auth()->user()->hasPermission('edit permission'), 403);
+        $permission = Permission::find($id);
+        return Inertia::render('Permissions/Edit', [
+            'permission' => $permission
+        ]);
+    }
+    
+    public function update(Request $request, $id)
+    {
+        abort_if(!auth()->user()->hasPermission('edit permission'), 403);
+        $request->validate([
+            'name' => 'required|unique:permissions,name,' . $id,
+            'description' => 'nullable'
+        ]);
+        $permission = Permission::find($id);
+        $permission->update($request->all());
+        return redirect()->route('permissions.index')->with('message', 'Permission Updated Successfully');
+    }
+    
+    public function show($id)
+    {
+        $permission = Permission::find($id);
+        return Inertia::render('Permissions/Show', [
+            'permission' => $permission
+        ]);
+    }
      
 }

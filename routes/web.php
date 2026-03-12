@@ -26,8 +26,8 @@ Route::inertia('/', 'welcome', [
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
-    Route::apiResource('products',[ProductController::class]);
-    Route::apiResource('categories',[ProductCategoryController::class]);
+    Route::apiResource('products', ProductController::class);
+    Route::apiResource('categories', ProductCategoryController::class);
     Route::get('categories/{category}/products', [ProductCategoryController::class, 'products']);
     Route::get('products/{product}/categories', [ProductController::class, 'categories']);
     Route::put('products/{product}/categories', [ProductController::class, 'syncCategories']);
@@ -96,6 +96,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::put('accounts/{id}', [AccountController::class, 'update']);
    Route::delete('accounts/{id}', [AccountController::class, 'destroy']);
    Route::get('accounts/{id}/show', [AccountController::class, 'show']);
+    Route::get('users', [AccountController::class, 'index']);
    Route::get('profile', [AccountController::class, 'profile'])->name('profile');
    Route::put('profile/update', [AccountController::class, 'updateProfile']);
    Route::put('profile/password', [AccountController::class, 'updatePassword']);
@@ -111,7 +112,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
    Route::get('attendance/report/data', [AttendanceController::class, 'reportData']);
    Route::get('attendance/report/export', [AttendanceController::class, 'exportReport']);
    Route::get('customers',[CustomerController::class, 'index' ]);
-   Route::post('customers/create', CustomerController::class,'create');
+   Route::post('customers/create', [CustomerController::class, 'create']);
    Route::post('customers/store', [CustomerController::class, 'store']);
    Route::get('customers/{id}/edit', [CustomerController::class, 'edit']);
    Route::put('customers/{id}', [CustomerController::class, 'update']);

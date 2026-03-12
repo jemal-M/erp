@@ -4,13 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AccountController extends Controller
 {
     public function index()
     {
-        return Inertia::render("Account/Index");
+        $users = User::with('role')->get();
+        return Inertia::render("Users", [
+            'users' => $users
+        ]);
     }
     
     public function create()
@@ -20,12 +24,14 @@ class AccountController extends Controller
     }
     public function update(Request $request)
     {
-        $request()->validate([
+        $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
         ]);
 
-      $request->user()->update($request->only('name','email'));  
+        $request->user()->update($request->only('name','email'));
+        
+        return redirect()->back()->with('message', 'Profile updated successfully!');
     }
 
     public function destroy(Request $request)
@@ -34,14 +40,20 @@ class AccountController extends Controller
 
         return redirect('/')->with('message', 'Account deleted successfully!');
     }
+    
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8',
         ]);
 
-        $user = User::create($request->only('name', 'email'));
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
         
         return redirect()->back()->with('message', 'User created successfully!');
     }
@@ -74,11 +86,6 @@ class AccountController extends Controller
     }
 
     public function changepassword()
-    {
-        return Inertia::render("Account/changepassword");
-    }
-
-    public function profile()
     {
         return Inertia::render("Account/Profile");
     }
@@ -116,11 +123,12 @@ class AccountController extends Controller
         if (!file_exists(public_path('uploads/'.$file))) {
             return redirect()->back()->with('error', 'File not found!');
         }
-        if (auth()->user()->role == 'user') {
+        
+        $user = Auth::user();
+        
+        // Check if user is authenticated and has admin role
+        if (!$user || !$user->role || $user->role->name !== 'admin') {
             return redirect()->back()->with('error', 'You are not authorized to download this file!');
-        }
-        if (auth()->user()->role == 'admin') {
-            return response()->download(public_path('uploads/'.$file));
         }
         return response()->download(public_path('uploads/'.$file));
     }
@@ -130,12 +138,12 @@ class AccountController extends Controller
         if (!file_exists(public_path('uploads/'.$file))) {
             return redirect()->back()->with('error', 'File not found!');
         }
-        if (auth()->user()->role == 'user') {
+        
+        $user = Auth::user();
+        
+        // Check if user is authenticated and has admin role
+        if (!$user || !$user->role || $user->role->name !== 'admin') {
             return redirect()->back()->with('error', 'You are not authorized to delete this file!');
-        }
-        if (auth()->user()->role == 'admin') {
-            unlink(public_path('uploads/'.$file));
-            return redirect()->back()->with('message', 'File deleted successfully!');
         }
         unlink(public_path('uploads/'.$file));
         return redirect()->back()->with('message', 'File deleted successfully!');

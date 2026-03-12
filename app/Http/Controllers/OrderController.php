@@ -61,4 +61,17 @@ class OrderController extends Controller
         return response()->json($orders);
     }
     
+    public function create()
+    {
+        return Inertia::render('Orders/Create');
+    }
+    
+    public function edit($id)
+    {
+        $order = \App\Models\Order::find($id);
+        return Inertia::render('Orders/Edit', [
+            'order' => $order
+        ]);
+    }
+    
 }

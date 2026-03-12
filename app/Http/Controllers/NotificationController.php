@@ -43,4 +43,47 @@ class NotificationController extends Controller
         return ['count' => auth()->user()->unreadNotifications->count()];
     }
     
+    public function edit($id)
+    {
+        return Inertia::render('Notifications/Edit', [
+            'notification' => $id
+        ]);
+    }
+    
+    public function update(Request $request, $id)
+    {
+        return redirect()->back();
+    }
+    
+    public function create()
+    {
+        return Inertia::render('Notifications/Create');
+    }
+    
+    public function store(Request $request)
+    {
+        return redirect()->back();
+    }
+    
+    public function read()
+    {
+        return Inertia::render('Notifications/Index', [
+            'notifications' => auth()->user()->readNotifications
+        ]);
+    }
+    
+    public function unread()
+    {
+        return Inertia::render('Notifications/Index', [
+            'notifications' => auth()->user()->unreadNotifications
+        ]);
+    }
+    
+    public function all()
+    {
+        return Inertia::render('Notifications/Index', [
+            'notifications' => auth()->user()->notifications
+        ]);
+    }
+    
 }

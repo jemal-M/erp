@@ -36,4 +36,27 @@ class DepartmentController extends Controller
             'department' => $department
         ]);
     }
+    
+    public function edit(Department $department)
+    {
+        return Inertia::render('Departments/Edit', [
+            'department' => $department
+        ]);
+    }
+    
+    public function update(Request $request, Department $department)
+    {
+        $validate = $request->validate([
+            'name' => 'required|unique:departments,name,' . $department->id . '|max:255',
+            'description' => 'required',
+        ]);
+        $department->update($validate);
+        return redirect()->back();
+    }
+    
+    public function destroy(Department $department)
+    {
+        $department->delete();
+        return redirect()->back();
+    }
 }

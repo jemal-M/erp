@@ -12,8 +12,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Users -> Roles (role_id column added by 070002, now add constraint)
+        // Users -> Roles (need to add role_id column first, then add constraint)
         Schema::table('users', function (Blueprint $table) {
+            $table->unsignedBigInteger('role_id')->nullable()->after('id');
             $table->foreign('role_id')->references('id')->on('roles')->cascadeOnDelete();
         });
 
@@ -22,6 +23,11 @@ return new class extends Migration
             $table->foreign('product_category_id')->references('id')->on('product_categories')->cascadeOnDelete();
             $table->foreign('product_unit_id')->references('id')->on('product_units')->cascadeOnDelete();
             $table->foreign('warehouse_id')->references('id')->on('warehouses')->cascadeOnDelete();
+        });
+
+        // Designations -> Departments
+        Schema::table('designations', function (Blueprint $table) {
+            $table->foreign('department_id')->references('id')->on('departments')->cascadeOnDelete();
         });
 
         // Expenses -> Expense Categories (column already added by 070003)
@@ -39,9 +45,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Users - drop only the foreign key, not the column (column was added by 070002)
+        // Users - drop foreign key and column
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
+            $table->dropColumn(['role_id']);
         });
 
         // Employees - drop foreign keys only (columns were added by 070002)
@@ -57,6 +64,12 @@ return new class extends Migration
             $table->dropForeign(['product_unit_id']);
             $table->dropForeign(['warehouse_id']);
             $table->dropColumn(['product_category_id', 'product_unit_id', 'warehouse_id']);
+        });
+
+        // Designations - drop foreign key and column (column was added in create_designations_table)
+        Schema::table('designations', function (Blueprint $table) {
+            $table->dropForeign(['department_id']);
+            $table->dropColumn(['department_id', 'description']);
         });
 
         // Purchase Orders - skip (foreign key was added by create_purchase_orders_table)

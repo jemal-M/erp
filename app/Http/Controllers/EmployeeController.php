@@ -60,6 +60,12 @@ class EmployeeController extends Controller
         return redirect()->route('employee.index')->with('message', 'Employee Deleted Successfully');
     }
 
-   
+    public function show(Employee $employee)
+    {
+        return Inertia::render('Employee/Show', [
+            'employee' => $employee
+        ]);
+    }
+    
 
 }
