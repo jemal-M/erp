@@ -1,0 +1,32 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Warehouse;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+
+class WarehouseSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        Warehouse::insert([
+            'name' => 'Gudang Pusat',
+            'location' => 'Bandung',
+        ]);
+
+        Warehouse::insert([
+            'name' => 'Gudang Cabang',
+            'location' => 'Jakarta',
+        ]);
+
+        Warehouse::insert([
+            'name' => 'Gudang Depok',
+            'location' => 'Depok',
+        ]);
+        
+    }
+}

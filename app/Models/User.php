@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id',
     ];
 
     /**
@@ -49,5 +50,93 @@ class User extends Authenticatable
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Get the role associated with the user.
+     */
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Get the employee profile associated with the user.
+     */
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    /**
+     * Get the activity logs for the user.
+     */
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class);
+    }
+
+    /**
+     * Get the audit logs for the user.
+     */
+    public function auditLogs()
+    {
+        return $this->hasMany(AuditLog::class);
+    }
+
+    /**
+     * Get the permissions associated with the user through roles.
+     */
+    public function permissions()
+    {
+        return $this->belongsToMany(Permission::class, 'role_user')
+            ->withPivot('role_id')
+            ->withTimestamps();
+    }
+
+    /**
+     * Check if the user has a specific permission.
+     */
+    public function hasPermission(string $permission): bool
+    {
+        // Check direct permissions
+        if ($this->permissions->contains('name', $permission)) {
+            return true;
+        }
+
+        // Check permissions through role
+        if ($this->role && $this->role->permissions->contains('name', $permission)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get all permissions for the user (direct and through role).
+     */
+    public function getAllPermissions()
+    {
+        $permissions = collect();
+
+        // Get direct permissions
+        $permissions = $permissions->merge($this->permissions);
+
+        // Get permissions through role
+        if ($this->role) {
+            $permissions = $permissions->merge($this->role->permissions);
+        }
+
+        return $permissions->unique('id')->values();
+    }
+
+    /**
+     * Give a permission to the user directly.
+     */
+    public function givePermissionTo(string $permissionName): self
+    {
+        $permission = Permission::firstOrCreate(['name' => $permissionName]);
+        $this->permissions()->syncWithoutDetaching($permission);
+        return $this;
     }
 }

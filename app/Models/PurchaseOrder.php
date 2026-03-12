@@ -7,11 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseOrder extends Model
 {
     protected $fillable = [
-        'supplier_id', 'order_daye', 'total_amount','status'
+        'supplier_id', 'order_date', 'total_amount','status'
     ];
-    public function suplier(){
+
+    protected $casts = [
+        'order_date' => 'date',
+        'total_amount' => 'decimal:2',
+    ];
+
+    public function supplier(){
         return $this->belongsTo(Supplier::class);
-    
     }
 
     public function items(){

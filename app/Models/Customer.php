@@ -10,10 +10,21 @@ class Customer extends Model
         'name',
         'email',
         'phone',
-        "'addrress"
+        'address'
     ];
+
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+    ];
+
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class);
     }
 }
