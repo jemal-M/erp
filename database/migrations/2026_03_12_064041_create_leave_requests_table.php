@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('leave_requests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->string('payment_method');
-            $table->date('payment_date');
-            $table->decimal('amount', 10, 2);
+            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->date('start_date');
+            $table->date('end_date');
+            $table->text('reason');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('leave_requests');
     }
 };

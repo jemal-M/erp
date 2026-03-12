@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('payments', function (Blueprint $table) {
+        Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('order_id')->constrained()->cascadeOnDelete();
-            $table->string('payment_method');
-            $table->date('payment_date');
-            $table->decimal('amount', 10, 2);
+            $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
+            $table->date('date');
+            $table->time('check_in')->nullable();
+            $table->time('check_out')->nullable();
+            $table->enum('status', ['present', 'absent', 'leave']);
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('payments');
+        Schema::dropIfExists('attendances');
     }
 };
