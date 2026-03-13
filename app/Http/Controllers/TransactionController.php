@@ -23,7 +23,7 @@ class TransactionController extends Controller
             'name' => 'required',
             'amount' => 'required|numeric|min:0',
             'date' => 'required|date',
-            'type' => 'required|in:income,expense',
+            'type' => 'required|in:credit,debit',
             'category' => 'required'
         ]);
 
@@ -55,7 +55,7 @@ class TransactionController extends Controller
             'name' => 'required',
             'amount' => 'required|numeric|min:0',
             'date' => 'required|date',
-            'type' => 'required|in:income,expense',
+            'type' => 'required|in:credit,debit',
             'category' => 'required'
         ]);
 
@@ -75,9 +75,9 @@ class TransactionController extends Controller
     {
         $transactions = auth()->user()->transactions()->get();
         $summary = [
-            'income' => $transactions->where('type', 'income')->sum('amount'),
-            'expense' => $transactions->where('type', 'expense')->sum('amount'),
-            'balance' => $transactions->where('type', 'income')->sum('amount') - $transactions->where('type', 'expense')->sum('amount')
+            'income' => $transactions->where('type', 'credit')->sum('amount'),
+            'expense' => $transactions->where('type', 'debit')->sum('amount'),
+            'balance' => $transactions->where('type', 'credit')->sum('amount') - $transactions->where('type', 'debit')->sum('amount')
         ];
 
         return Inertia::render('Transactions/Summary', [
@@ -88,9 +88,9 @@ class TransactionController extends Controller
     {
         $transactions = auth()->user()->transactions()->get();
         $summary = [
-            'income' => $transactions->where('type', 'income')->sum('amount'),
-            'expense' => $transactions->where('type', 'expense')->sum('amount'),
-            'balance' => $transactions->where('type', 'income')->sum('amount') - $transactions->where('type', 'expense')->sum('amount')
+            'income' => $transactions->where('type', 'credit')->sum('amount'),
+            'expense' => $transactions->where('type', 'debit')->sum('amount'),
+            'balance' => $transactions->where('type', 'credit')->sum('amount') - $transactions->where('type', 'debit')->sum('amount')
         ];
 
         return Inertia::render('Transactions/Report', [
